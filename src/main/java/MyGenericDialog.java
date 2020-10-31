@@ -13,9 +13,9 @@ public class MyGenericDialog implements PlugIn, DialogListener {
         GenericDialog interfaceGrafica = new GenericDialog("Conversão para Escala de Cinza");
         interfaceGrafica.addDialogListener(this);
 
-        String[] estrategia = {"Estratégia Médias", "Estratégia Lum","Estratégia 3"};
+        String[] estrategia = {"Estratégia Médias", "Estratégia Luminância Analógica","Estratégia Luminância Digital"};
 
-        interfaceGrafica.addRadioButtonGroup("Escolha uma estratégia:", estrategia, 1, 3, "Estratégia 2");
+        interfaceGrafica.addRadioButtonGroup("Escolha uma estratégia:", estrategia, 3, 1, "Estratégia Médias");
 
         interfaceGrafica.showDialog();
 
@@ -29,17 +29,6 @@ public class MyGenericDialog implements PlugIn, DialogListener {
                 TecnicasFundamentais tF = new TecnicasFundamentais();
                 tF.run(opcaoEscolhida);
 
-                /*
-                IJ.log("_____________Últimas respostas obtidas_______________");
-                IJ.log("Resposta da mensagem:" + interfaceGrafica.getNextText());
-                IJ.log("Resposta da caixa de texto:" + interfaceGrafica.getNextString());
-                IJ.log("Resposta do botão de rádio:" + interfaceGrafica.getNextRadioButton());
-                IJ.log("Resposta do campo numérico:" + interfaceGrafica.getNextNumber());
-                IJ.log("Resposta do checkbox:" + interfaceGrafica.getNextBoolean());
-                IJ.log("Resposta do slider:" + interfaceGrafica.getNextNumber());
-
-                IJ.showMessage("Plugin encerrado com sucesso!");
-                */
             }
         }
     }
@@ -47,15 +36,6 @@ public class MyGenericDialog implements PlugIn, DialogListener {
     @Override
     public boolean dialogItemChanged(GenericDialog interfaceGrafica, AWTEvent e) {
         if (interfaceGrafica.wasCanceled()) return false;
-        /*
-        IJ.log("Resposta da mensagem:" + interfaceGrafica.getNextText());
-        IJ.log("Resposta da caixa de texto:" + interfaceGrafica.getNextString());
-        IJ.log("Resposta do botão de rádio:" + interfaceGrafica.getNextRadioButton());
-        IJ.log("Resposta do campo numérico:" + interfaceGrafica.getNextNumber());
-        IJ.log("Resposta do checkbox:" + interfaceGrafica.getNextBoolean());
-        IJ.log("Resposta do slider:" + interfaceGrafica.getNextNumber());
-        IJ.log("\n");
-        */
 
         return true;
     }
