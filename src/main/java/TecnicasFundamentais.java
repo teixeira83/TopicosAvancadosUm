@@ -11,22 +11,27 @@ public class TecnicasFundamentais implements PlugIn {
     public void run(String s) {
 
         IJ.run("Clown");
+//        IJ.open("C:/Users/rafael/Downloads/1rgbxcmyk.jpg");
         ImagePlus imagem = IJ.getImage();
         ImageProcessor processador = imagem.getProcessor();
 
         if (s.equals(media)) {
-
-           ImagePlus novaImagem = criarImagem("Nova Imagem Aplicada Técnica Médias", processador);
-
+//            ImagePlus novaImagem = criarImagem("Nova Imagem Aplicada Técnica Media", processador);
+//            ImagePlus novaImagem = imagem;
            int pixel[] = {0, 0, 0};
            for( int i = 0; i  < processador.getWidth(); i++) {
                for( int j = 0; j < processador.getHeight(); j++) {
                    pixel  = processador.getPixel(i, j, pixel);
                    float novoValorPixel = ( pixel[0] + pixel[1] + pixel[2] ) / 3;
-                   novaImagem.getProcessor().putPixel(i, j, (int) novoValorPixel);
+                   pixel[0] = (int) novoValorPixel;
+                   pixel[1] = (int) novoValorPixel;
+                   pixel[2] = (int) novoValorPixel;
+                   imagem.getProcessor().putPixel(i, j, (int) novoValorPixel);
                }
+//               try { Thread.sleep (500); } catch (InterruptedException ex) {}
            }
-           novaImagem.show();
+//           novaImagem.show();
+            imagem.updateAndDraw();
        }
 
        if (s.equals(lum)) {
