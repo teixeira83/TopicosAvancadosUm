@@ -46,7 +46,8 @@ public class AjustarBrilhoContrasteESolarizacao implements PlugIn, DialogListene
         interfaceGrafica.addSlider("Configurar Contraste: ", -255, 255, 0, 1);
         interfaceGrafica.addMessage("Configurar Solarização nos pixels com valor de...");
         interfaceGrafica.addSlider("No mínimo: ", 0, 255, 0, 1);
-        interfaceGrafica.addSlider("No máximo: ", 0, 255, 255, 1);
+        interfaceGrafica.addSlider("No máximo: ", 0, 255, 0, 1);
+        interfaceGrafica.addSlider("Configurar Desaturação: ", 0, 1, 1, 0.1);
 
         interfaceGrafica.showDialog();
 
@@ -63,20 +64,7 @@ public class AjustarBrilhoContrasteESolarizacao implements PlugIn, DialogListene
         }
     }
 
-    @Override
-    public boolean dialogItemChanged(GenericDialog interfaceGrafica, AWTEvent awtEvent) {
-        if (interfaceGrafica.wasCanceled()) return false;
 
-        ImageProcessor processadorAuxiliar = getProcessadorOriginal().createProcessor(getImagemOriginal().getWidth(), getProcessadorOriginal().getHeight());
-
-        ajustarImagem(interfaceGrafica, getProcessadorOriginal(), processadorAuxiliar);
-
-        getImagemOriginal().setProcessor(processadorAuxiliar);
-
-        getImagemOriginal().updateAndDraw();
-
-        return true;
-    }
 
     private void ajustarImagem(GenericDialog interfaceGrafica, ImageProcessor processadorOriginal, ImageProcessor processadorAuxiliar) {
 
@@ -84,11 +72,12 @@ public class AjustarBrilhoContrasteESolarizacao implements PlugIn, DialogListene
         int sliderContraste = (int) interfaceGrafica.getNextNumber();
         int sliderSolarizacaoMinima = (int) interfaceGrafica.getNextNumber();
         int sliderSolarizacaoMaxima = (int) interfaceGrafica.getNextNumber();
+        float sliderDesolarizacao = (float) interfaceGrafica.getNextNumber();
 
         ajustarBrilho(processadorAuxiliar, sliderBrilho);
-
         ajustarContraste(processadorAuxiliar, sliderContraste);
         ajustarSolarizacao(processadorAuxiliar, sliderSolarizacaoMinima, sliderSolarizacaoMaxima);
+        ajustarDesolarizacao(processadorAuxiliar, sliderDesolarizacao);
     }
 
     private int[] tratarPixel(int[] pixel) {
@@ -159,4 +148,36 @@ public class AjustarBrilhoContrasteESolarizacao implements PlugIn, DialogListene
         }
     }
 
+    private void ajustarDesolarizacao(ImageProcessor processadorAuxiliar, float sliderDesolarizacao) {
+        int pixel[] = {0, 0, 0};
+
+        for (int i = 0; i < processadorAuxiliar.getWidth(); i++) {
+            for (int j = 0; j < processadorAuxiliar.getHeight(); j++) {
+                pixel = processadorAuxiliar.getPixel(i, j, pixel);
+
+                float mediaPixels = (pixel[0] + pixel[1] + pixel[2]) / 3;
+
+                for(int p = 0; p < pixel.length; p++) {
+                    pixel[p] = (int) mediaPixels + (int) ( sliderDesolarizacao * ( pixel[p] - (int) mediaPixels ) ) ;
+                }
+
+                processadorAuxiliar.putPixel(i, j, pixel);
+            }
+        }
+    }
+
+    @Override
+    public boolean dialogItemChanged(GenericDialog interfaceGrafica, AWTEvent awtEvent) {
+        if (interfaceGrafica.wasCanceled()) return false;
+
+        ImageProcessor processadorAuxiliar = getProcessadorOriginal().createProcessor(getImagemOriginal().getWidth(), getProcessadorOriginal().getHeight());
+
+        ajustarImagem(interfaceGrafica, getProcessadorOriginal(), processadorAuxiliar);
+
+        getImagemOriginal().setProcessor(processadorAuxiliar);
+
+        getImagemOriginal().updateAndDraw();
+
+        return true;
+    }
 }
